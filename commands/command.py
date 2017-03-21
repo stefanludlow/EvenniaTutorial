@@ -8,7 +8,7 @@ Commands describe the input the player can do to the game.
 from evennia import Command as BaseCommand
 from evennia import TICKER_HANDLER as tickerhandler
 from evennia import utils
-
+from random import randint
 from world import rules
 
 
@@ -297,7 +297,8 @@ class CmdHit(Command):
             caller.msg("You affectionately pat yourself on the back.")
             caller.location.msg_contents("{} affectionately pats themselves on the back.".format(caller.name), exclude=[caller])
             return
-        tickerhandler.add(15, rules.skill_combat, caller=caller, target=target, persistent=False, idstring="combatticker")
+        combat_ticker = randint(0,100000)
+        tickerhandler.add(15, rules.skill_combat, caller=caller, target=target, id=combat_ticker, persistent=False, idstring=combat_ticker)
         #rules.skill_combat(caller, target)
 
         # End of validation checks
