@@ -298,7 +298,7 @@ class CmdHit(Command):
             caller.location.msg_contents("{} affectionately pats themselves on the back.".format(caller.name), exclude=[caller])
             return
         combat_ticker = randint(0,100000)
-        tickerhandler.add(15, rules.skill_combat, caller=caller, target=target, id=combat_ticker, persistent=False, idstring=combat_ticker)
+        tickerhandler.add(5, rules.skill_combat, caller=caller, target=target, id=combat_ticker, persistent=False, idstring=combat_ticker)
         #rules.skill_combat(caller, target)
 
         # End of validation checks
