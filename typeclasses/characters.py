@@ -48,8 +48,8 @@ class Character(DefaultCharacter):
         self.db.dex = 10
         self.db.con = 10
         self.db.int = 10
-        self.db.wis = 10
-        self.db.chr = 10
+        self.db.wil = 10
+        self.db.agi = 10
         self.db.skills = {  'combat' : randint(1,100),
                             'unarmed' : randint(5,10),
                             'long-blade': randint(5,10 )}
