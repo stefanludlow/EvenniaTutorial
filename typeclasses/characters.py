@@ -53,6 +53,9 @@ class Character(DefaultCharacter):
         self.db.skills = {  'combat' : randint(1,100),
                             'unarmed' : randint(5,10),
                             'long-blade': randint(5,10 )}
+        self.db.fighting = None
+
+
 
     def get_abilities(self):
         """

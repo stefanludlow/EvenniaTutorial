@@ -10,6 +10,10 @@ from evennia import TICKER_HANDLER as tickerhandler
 from evennia import utils
 from random import randint
 from world import rules
+from world.rules import combat_list
+from world.rules import can_hit
+from world.rules import set_fighting
+from world.rules import do_hit
 
 
 # from evennia import default_cmds
@@ -286,19 +290,18 @@ class CmdHit(Command):
         "implements the actual functionality"
         caller = self.caller
         target = caller.search(self.target)
-        # Beginning of the validation checks
-        if not target:
-            caller.msg("Hit whom?")
+        # Checks for valid target
+        if not can_hit(caller, target):
             return
-        if not utils.inherits_from(target, 'typeclasses.characters.Character'):
-            caller.msg("This is not a valid target.")
-            return
-        if target == caller:
-            caller.msg("You affectionately pat yourself on the back.")
-            caller.location.msg_contents("{} affectionately pats themselves on the back.".format(caller.name), exclude=[caller])
-            return
-        combat_ticker = randint(0,100000)
-        tickerhandler.add(5, rules.skill_combat, caller=caller, target=target, id=combat_ticker, persistent=False, idstring=combat_ticker)
+        # Set fighting variable on both character and target. Add combatants to the combat list.
+        # Also check if one character is already fighting (todo)
+        set_fighting(caller, target)
+        # Begin Combat
+        caller.msg("You are fighting {}".format(target))
+        tickerhandler.add(5, rules.do_hit, persistent=False, idstring="Combat_Ticker")
+        do_hit()
+        #combat_ticker = randint(0,100000)
+        #tickerhandler.add(5, rules.skill_combat, caller=caller, target=target, id=combat_ticker, persistent=False, idstring=combat_ticker)
         #rules.skill_combat(caller, target)
 
         # End of validation checks

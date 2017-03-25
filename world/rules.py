@@ -2,6 +2,46 @@ from random import randint
 from evennia import utils
 from evennia import TICKER_HANDLER as tickerhandler
 
+combatlist = []
+
+def can_hit(caller, target):
+    if not target:
+        caller.msg("Hit whom?")
+        return False
+    if not utils.inherits_from(target, 'typeclasses.characters.Character'):
+        caller.msg("This is not a valid target.")
+        return False
+    if target == caller:
+        caller.msg("You affectionately pat yourself on the back.")
+        caller.location.msg_contents("{} affectionately pats themselves on the back.".format(caller.name),
+                                     exclude=[caller])
+        return False
+    else:
+        return True
+
+def combat_list(character):
+    combatlist.append(character)
+
+def set_fighting(caller, target):
+    caller.db.fighting = target
+    target.db.fighting = caller
+    if caller not in combatlist:
+        combatlist.append(caller)
+    if target not in combatlist:
+        combatlist.append(target)
+
+def do_hit():
+    for character in combatlist:
+        delay = randint(0,3)
+        utils.delay(delay, callback=attack_msg, character=character)
+        print combatlist
+
+def attack_msg(character):
+    dmg = randint(0, 10)
+    character.msg("You strike {} for {} damage".format(character.db.fighting, dmg))
+    character.db.fighting.msg("{} strikes you for {} damage".format(character, dmg))
+
+
 def roll_hit():
     "Roll 1d100"
     return randint(1, 100)
@@ -15,6 +55,7 @@ def check_defeat(character, id):
     if character.db.hp['Current'] <= 0:
         character.msg("You fall down, defeated!")
         character.db.hp['Current'] = character.db.hp['Max']
+        character.db.fighting = None
         tickerhandler.remove(5, skill_combat, persistent=False, idstring=id)
         update_prompt(character)
         return
